@@ -33,4 +33,13 @@ export const productRepository = {
       where: { id: { in: ids } },
     });
   },
+
+  // Reduce a product's stock after a sale. `decrement` is a Prisma helper that
+  // subtracts atomically in the database.
+  decrementStock(id: string, quantity: number) {
+    return prisma.product.update({
+      where: { id },
+      data: { stock: { decrement: quantity } },
+    });
+  },
 };
