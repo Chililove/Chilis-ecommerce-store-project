@@ -13,7 +13,7 @@ import { useCart } from "@/lib/cart/CartContext";
 import { formatDkk } from "@/lib/format";
 
 export default function CartPage() {
-  const { items, removeItem, clear, totalPrice } = useCart();
+  const { items, removeItem, updateQuantity, clear, totalPrice } = useCart();
 
   // Empty-cart state.
   if (items.length === 0) {
@@ -38,8 +38,28 @@ export default function CartPage() {
             <div>
               <p className="font-medium">{item.name}</p>
               <p className="text-sm text-gray-500">
-                {item.quantity} × {formatDkk(item.price)}
+                {formatDkk(item.price)} each
               </p>
+
+              {/* Quantity stepper. Each button sets a new quantity via
+                  updateQuantity; going below 1 removes the item. */}
+              <div className="mt-2 flex items-center gap-3">
+                <button
+                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  className="h-7 w-7 rounded-full border border-gray-300 text-lg leading-none hover:bg-gray-100"
+                  aria-label={`Decrease quantity of ${item.name}`}
+                >
+                  −
+                </button>
+                <span className="w-6 text-center">{item.quantity}</span>
+                <button
+                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  className="h-7 w-7 rounded-full border border-gray-300 text-lg leading-none hover:bg-gray-100"
+                  aria-label={`Increase quantity of ${item.name}`}
+                >
+                  +
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-4">

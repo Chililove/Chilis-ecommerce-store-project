@@ -79,6 +79,7 @@ type CartContextValue = {
   items: CartItem[];
   addItem: (product: Omit<CartItem, "quantity">) => void;
   removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clear: () => void;
   totalItems: number; // total quantity across all lines (for the header badge)
   totalPrice: number; // grand total in DKK
@@ -109,6 +110,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     save(items.filter((item) => item.id !== id));
   }
 
+  // Set a specific quantity for one item. If it drops to zero (or below),
+  // we remove the item entirely — a cart line with quantity 0 makes no sense.
+  function updateQuantity(id: string, quantity: number) {
+    if (quantity <= 0) {
+      save(items.filter((item) => item.id !== id));
+      return;
+    }
+    save(
+      items.map((item) => (item.id === id ? { ...item, quantity } : item))
+    );
+  }
+
   function clear() {
     save([]);
   }
@@ -124,6 +137,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     items,
     addItem,
     removeItem,
+    updateQuantity,
     clear,
     totalItems,
     totalPrice,
