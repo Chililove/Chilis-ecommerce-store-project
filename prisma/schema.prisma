@@ -1,0 +1,56 @@
+// This is my Prisma schema file,
+
+// free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================================================================
+//  DATA MODELS  —  the shape of the database tables
+// =============================================================================
+//  Read the comments: the *decisions* here are what data modeling is about.
+// =============================================================================
+
+model Product {
+  id          String      @id @default(cuid()) // non-guessable ID (safer in URLs)
+  name        String
+  description String
+  price       Decimal     @db.Decimal(10, 2) // amount in Danish kroner (e.g. 149.50). Decimal is exact — never use Float for money
+  imageUrl    String? // the "?" makes this optional (can be empty)
+  stock       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[] // one product can appear in many order lines
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  email      String // who placed the order
+  status     OrderStatus @default(PENDING)
+  totalPrice Decimal     @db.Decimal(10, 2) // total charged, in kroner (DKK)
+  createdAt  DateTime    @default(now())
+  items      OrderItem[] // one order has many line items
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  order      Order   @relation(fields: [orderId], references: [id])
+  orderId    String
+  product    Product @relation(fields: [productId], references: [id])
+  productId  String
+  quantity   Int
+  price      Decimal @db.Decimal(10, 2) // price AT THE TIME of purchase, in kroner (DKK)
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
+}
