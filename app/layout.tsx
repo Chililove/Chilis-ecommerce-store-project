@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/lib/cart/CartContext";
+import SiteHeader from "@/app/components/SiteHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* CartProvider wraps everything, so any page or component can use the
+            cart via useCart(). SiteHeader sits above all pages. */}
+        <CartProvider>
+          <SiteHeader />
+          {children}
+        </CartProvider>
+      </body>
     </html>
   );
 }

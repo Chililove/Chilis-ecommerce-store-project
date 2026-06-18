@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
+import AddToCartButton from "@/app/components/AddToCartButton";
 
 export default async function ProductDetailPage({
   params,
@@ -45,6 +46,15 @@ export default async function ProductDetailPage({
       <p className="mt-2 text-sm text-gray-500">
         {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
       </p>
+
+      {/* The interactive button. Is passing the Decimal price as a plain number. */}
+      <div>
+        <AddToCartButton
+          id={product.id}
+          name={product.name}
+          price={Number(product.price)}
+        />
+      </div>
     </main>
   );
 }
