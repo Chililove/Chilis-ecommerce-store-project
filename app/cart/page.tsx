@@ -15,6 +15,26 @@ import { formatDkk } from "@/lib/format";
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clear, totalPrice } = useCart();
 
+  // Send the cart to our API, which creates a Stripe Checkout Session and
+  // returns its URL. Then we send the browser to Stripe's secure payment page.
+  async function handleCheckout() {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        // We only send id + quantity. The server looks up the real prices.
+        items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
+      }),
+    });
+
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url; // redirect to Stripe
+    } else {
+      alert(data.error ?? "Could not start checkout.");
+    }
+  }
+
   // Empty-cart state.
   if (items.length === 0) {
     return (
@@ -86,7 +106,7 @@ export default function CartPage() {
       <div className="mt-8 flex items-center gap-4">
         <button
           className="rounded-full bg-black px-8 py-3 font-medium text-white transition hover:bg-gray-800"
-          onClick={() => alert("Checkout comes in Phase 4!")}
+          onClick={handleCheckout}
         >
           Checkout
         </button>

@@ -25,4 +25,12 @@ export const productRepository = {
       where: { id },
     });
   },
+
+  // Get many products at once by their ids. Used at checkout to look up the
+  // REAL prices from the database (never trust prices sent by the browser).
+  findManyByIds(ids: string[]) {
+    return prisma.product.findMany({
+      where: { id: { in: ids } },
+    });
+  },
 };
