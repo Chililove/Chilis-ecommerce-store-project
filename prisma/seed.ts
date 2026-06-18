@@ -1,52 +1,71 @@
 // =============================================================================
 //  SEED SCRIPT  —  fills database with data
 // =============================================================================
-//  Run it with:  npx tsx prisma/seed.ts
+//  Run it with:  npm run db:seed   (or: npx tsx prisma/seed.ts)
 // =============================================================================
 
 import "dotenv/config";
 import prisma from "../lib/prisma";
 
 async function main() {
-  console.log(" Seeding products...");
+  console.log("Seeding chili plants...");
+
+  // Clear existing rows first so re-running gives a clean slate.
+  // ORDER MATTERS because of foreign keys: delete the "child" rows that point
+  // at others BEFORE the rows they depend on. Otherwise you get "Foreign key constraint failed" errors.
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.product.deleteMany();
 
   // Prices are strings to stay exact for the Decimal column. They're in DKK.
   const products = [
     {
-      name: "Minimalist Desk Lamp",
-      description: "A warm LED lamp with a brushed-steel finish.",
-      price: "299.00",
+      name: "Bird's Eye Chili",
+      description: "A pocket-sized Thai bird's eye plant — tiny pot, mighty heat.",
+      price: "49.00",
+      stock: 40,
+      imageUrl: null,
+    },
+    {
+      name: "Jalapeño Sprout",
+      description: "Mild, friendly, and happy on a sunny windowsill.",
+      price: "59.00",
+      stock: 35,
+      imageUrl: null,
+    },
+    {
+      name: "Tabasco Tiny",
+      description: "An upright little plant covered in fiery red pods.",
+      price: "69.00",
       stock: 25,
       imageUrl: null,
     },
     {
-      name: "Ceramic Coffee Mug",
-      description: "Hand-glazed 350ml mug, dishwasher safe.",
-      price: "89.50",
-      stock: 60,
+      name: "Habanero Mini",
+      description: "A small plant with fierce, fruity heat. Handle with care.",
+      price: "79.00",
+      stock: 20,
       imageUrl: null,
     },
     {
-      name: "Wool Throw Blanket",
-      description: "Soft Scandinavian wool blanket, 130x170cm.",
-      price: "549.00",
-      stock: 12,
+      name: "Scotch Bonnet Baby",
+      description: "A Caribbean classic in a tiny terracotta pot.",
+      price: "89.00",
+      stock: 15,
       imageUrl: null,
     },
     {
-      name: "Notebook (A5, dotted)",
-      description: "120gsm dotted pages, hardcover, 192 pages.",
-      price: "129.95",
-      stock: 100,
+      name: "Carolina Reaper Seedling",
+      description: "The world-famous scorcher, as a tiny starter plant.",
+      price: "129.00",
+      stock: 8,
       imageUrl: null,
     },
   ];
 
-  // createMany inserts them all in one go. skipDuplicates avoids errors if you
-  // run the seed twice (it won't re-add a product with the same unique value).
   const result = await prisma.product.createMany({ data: products });
 
-  console.log(` Done. Inserted ${result.count} products.`);
+  console.log(`Done. Inserted ${result.count} chili plants.`);
 }
 
 main()
