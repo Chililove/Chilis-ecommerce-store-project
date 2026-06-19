@@ -10,6 +10,9 @@ import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
 
+// Render on every request so stock/listing data is always current.
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage() {
   const products = await productRepository.findAll();
 

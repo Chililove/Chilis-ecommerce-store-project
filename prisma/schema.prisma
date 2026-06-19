@@ -30,9 +30,13 @@ model Product {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  email      String // who placed the order
-  status     OrderStatus @default(PENDING)
+  id              String      @id @default(cuid())
+  email           String // who placed the order
+  status          OrderStatus @default(PENDING)
+  // The Stripe Checkout Session id. @unique is the key to idempotency: the
+  // database physically refuses a second order with the same session id, so a
+  // duplicate webhook can never create a duplicate order.
+  stripeSessionId String?     @unique
   totalPrice Decimal     @db.Decimal(10, 2) // total charged, in kroner (DKK)
   createdAt  DateTime    @default(now())
   items      OrderItem[] // one order has many line items

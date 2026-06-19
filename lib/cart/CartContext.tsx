@@ -27,8 +27,13 @@ export type CartItem = {
 
 // cache the parsed cart so getSnapshot returns the SAME array reference when
 // nothing has changed. useSyncExternalStore requires a stable reference
+
+// One stable empty-array reference. getServerSnapshot must return the SAME
+// value every call, or React warns about a possible infinite loop.
+const EMPTY_CART: CartItem[] = [];
+
 let cachedRaw: string | null = null;
-let cachedItems: CartItem[] = [];
+let cachedItems: CartItem[] = EMPTY_CART;
 
 // Read the current cart from localStorage (runs in the browser).
 function getSnapshot(): CartItem[] {
@@ -48,7 +53,7 @@ function getSnapshot(): CartItem[] {
 // piece that keeps hydration safe: the server and the first client render both
 // begin from this same empty value.
 function getServerSnapshot(): CartItem[] {
-  return [];
+  return EMPTY_CART;
 }
 
 // React calls subscribe to be told when the store changes. We keep a list of

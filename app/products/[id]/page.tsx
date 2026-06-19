@@ -17,6 +17,10 @@ import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
 import AddToCartButton from "@/app/components/AddToCartButton";
 
+// Render on every request so the stock count is always current. Without this,
+// Next.js may serve a cached version of the page showing stale stock.
+export const dynamic = "force-dynamic";
+
 export default async function ProductDetailPage({
   params,
 }: {

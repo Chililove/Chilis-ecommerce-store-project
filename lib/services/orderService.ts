@@ -14,8 +14,17 @@ export type CartLine = { id: string; quantity: number };
 export async function recordPaidOrder(params: {
   cart: CartLine[];
   email: string;
+  stripeSessionId: string;
 }) {
-  const { cart, email } = params;
+  const { cart, email, stripeSessionId } = params;
+
+  // IDEMPOTENCY: Stripe may deliver the same event more than once. If we've
+  // already saved an order for this checkout session, stop here so we don't
+  // create a duplicate or decrement stock twice.
+  const existing = await orderRepository.findByStripeSessionId(stripeSessionId);
+  if (existing) {
+    return;
+  }
 
   // Look up the real products so we use trusted names and prices.
   const products = await productRepository.findManyByIds(cart.map((l) => l.id));
@@ -39,7 +48,12 @@ export async function recordPaidOrder(params: {
   );
 
   // Save the order (with its line items).
-  await orderRepository.createPaidOrder({ email, totalPrice, items });
+  await orderRepository.createPaidOrder({
+    email,
+    totalPrice,
+    stripeSessionId,
+    items,
+  });
 
   // Reduce stock for each item sold.
   for (const item of items) {

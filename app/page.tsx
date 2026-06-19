@@ -11,6 +11,9 @@ import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
 
+// Render on every request so featured products reflect current data.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const products = await productRepository.findAll();
   const featured = products.slice(0, 3); // show the first three
