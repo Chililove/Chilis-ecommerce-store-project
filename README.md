@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tiny Chili Store 🌶️
 
-## Getting Started
+A small but complete e-commerce store for tiny chili plants — from gentle jalapeños to the fearsome Carolina Reaper. Browse the plants, fill a cart, and pay for real (well, with test cards). Built as a full-stack learning project, deployed and working end to end.
 
-First, run the development server:
+**Live demo:** https://chilis-ecommerce-store-project.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+> Payments run in Stripe **test mode**, so nothing is charged. Use card `4242 4242 4242 4242`, any future expiry, any CVC.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What it does
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Browse a catalogue of chili plants with images, prices (in DKK), and stock
+- Add items to a cart that **remembers itself** across page refreshes
+- Adjust quantities, remove items, see a running total
+- Check out securely through **Stripe Checkout**
+- On payment, the order is recorded and product stock is reduced — automatically and reliably
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech stack
 
-## Learn More
+- **Next.js (App Router) + TypeScript** — server and client components
+- **PostgreSQL + Prisma** — database and type-safe data access
+- **Stripe** — hosted checkout and webhooks
+- **Tailwind CSS** — styling
+- **Vercel** — hosting and CI (auto-deploys on every push)
 
-To learn more about Next.js, take a look at the following resources:
+## How it's built
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A few patterns keep the code tidy:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Repository layer** (`lib/repositories`) — the only place that talks to the database.
+- **Service layer** (`lib/services`) — business logic like building a checkout or recording an order. Prices are always re-checked against the database, never trusted from the browser.
+- **Cart via React Context + `useSyncExternalStore`** — shared cart state, persisted to `localStorage`.
+- **Stripe webhook** — the trusted source of truth for "payment succeeded." It verifies Stripe's signature and is **idempotent**, so a duplicated event can't create a duplicate order.
 
-## Deploy on Vercel
+## Run it locally
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You'll need Node.js 20+, a PostgreSQL database, and a Stripe account (test mode).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create a `.env` file with:
+
+   ```bash
+   DATABASE_URL="postgres://..."        # your Postgres connection string
+   STRIPE_SECRET_KEY="sk_test_..."      # Stripe secret key (test mode)
+   STRIPE_WEBHOOK_SECRET="whsec_..."    # from `stripe listen` (see below)
+   ```
+
+3. Set up the database and add sample plants:
+
+   ```bash
+   npx prisma migrate dev
+   npm run db:seed
+   ```
+
+4. Start the dev server:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open http://localhost:3000.
+
+5. To test checkout locally, forward Stripe webhooks in a second terminal:
+
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+
+   Copy the `whsec_...` it prints into your `.env` as `STRIPE_WEBHOOK_SECRET`, then restart the dev server.
+
+## Handy scripts
+
+| Command             | What it does                            |
+| ------------------- | --------------------------------------- |
+| `npm run dev`       | Start the local dev server              |
+| `npm run build`     | Production build                        |
+| `npm run db:seed`   | Reset and reseed the products           |
+| `npm run db:studio` | Open Prisma Studio to view the database |
+
+---
+
+Built by Louise Chili Lauenborg as a portfolio project. 🌶️
