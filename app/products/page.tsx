@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
+import ProductImage from "@/app/components/ProductImage";
 
 // Render on every request so stock/listing data is always current.
 export const dynamic = "force-dynamic";
@@ -33,7 +34,8 @@ export default async function ProductsPage() {
               href={`/products/${product.id}`}
               className="rounded-xl border border-gray-200 p-5 transition hover:shadow-md"
             >
-              <h2 className="text-lg font-semibold">{product.name}</h2>
+              <ProductImage src={product.imageUrl} alt={product.name} />
+              <h2 className="mt-3 text-lg font-semibold">{product.name}</h2>
               <p className="mt-1 line-clamp-2 text-sm text-gray-500">
                 {product.description}
               </p>

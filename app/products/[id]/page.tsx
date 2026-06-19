@@ -16,6 +16,7 @@ import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
 import AddToCartButton from "@/app/components/AddToCartButton";
+import ProductImage from "@/app/components/ProductImage";
 
 // Render on every request so the stock count is always current. Without this,
 // Next.js may serve a cached version of the page showing stale stock.
@@ -39,6 +40,10 @@ export default async function ProductDetailPage({
       <Link href="/products" className="text-sm text-gray-500 hover:underline">
         ← Back to products
       </Link>
+
+      <div className="mt-4 max-w-sm">
+        <ProductImage src={product.imageUrl} alt={product.name} />
+      </div>
 
       <h1 className="mt-4 text-3xl font-bold">{product.name}</h1>
       <p className="mt-3 text-gray-600">{product.description}</p>
