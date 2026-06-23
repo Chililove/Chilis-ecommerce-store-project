@@ -1,16 +1,3 @@
-// =============================================================================
-//  PRODUCT DETAIL PAGE  —  lives at "/products/<id>"
-// =============================================================================
-//  The folder name "[id]" makes this a DYNAMIC route:
-//  one file that serves every product. The actual id from the URL arrives in
-//  `params`.
-//
-//  `params` is a Promise, so we `await` it.
-//
-//  If no product matches the id, we call notFound(), which shows Next.js's
-//  built-in 404 page —  handling "this thing doesn't exist".
-// =============================================================================
-
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
@@ -18,8 +5,7 @@ import { formatDkk } from "@/lib/format";
 import AddToCartButton from "@/app/components/AddToCartButton";
 import ProductImage from "@/app/components/ProductImage";
 
-// Render on every request so the stock count is always current. Without this,
-// Next.js may serve a cached version of the page showing stale stock.
+// Force dynamic rendering so the stock count is never served stale from cache.
 export const dynamic = "force-dynamic";
 
 export default async function ProductDetailPage({
@@ -30,7 +16,6 @@ export default async function ProductDetailPage({
   const { id } = await params;
   const product = await productRepository.findById(id);
 
-  // No product with this id? Show the 404 page.
   if (!product) {
     notFound();
   }
@@ -56,7 +41,6 @@ export default async function ProductDetailPage({
         {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
       </p>
 
-      {/* The interactive button. Is passing the Decimal price as a plain number. */}
       <div>
         <AddToCartButton
           id={product.id}

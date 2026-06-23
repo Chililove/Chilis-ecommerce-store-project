@@ -1,10 +1,3 @@
-// =============================================================================
-//  CHECKOUT SUCCESS PAGE  —  lives at "/checkout/success"
-// =============================================================================
-//  Stripe sends the customer here after a successful payment. We clear the cart
-//  and show a thank-you.
-// =============================================================================
-
 "use client";
 
 import { useEffect } from "react";
@@ -14,7 +7,6 @@ import { useCart } from "@/lib/cart/CartContext";
 export default function CheckoutSuccessPage() {
   const { clear } = useCart();
 
-  // Empty the cart once, when this page loads.
   useEffect(() => {
     clear();
   }, [clear]);

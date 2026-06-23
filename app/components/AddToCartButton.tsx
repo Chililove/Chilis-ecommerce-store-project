@@ -1,12 +1,3 @@
-// =============================================================================
-//  ADD TO CART BUTTON  —  client component used on the product detail page
-// =============================================================================
-//  The detail page is a Server Component (it can't use hooks), so the
-//  interactive button lives here as its own client component. The page passes
-//  in the product's id, name, and price as plain props, and this button calls
-//  useCart().addItem when clicked.
-// =============================================================================
-
 "use client";
 
 import { useState } from "react";
@@ -15,7 +6,7 @@ import { useCart } from "@/lib/cart/CartContext";
 type Props = {
   id: string;
   name: string;
-  price: number; // already converted from Decimal to a plain number by the page
+  price: number;
 };
 
 export default function AddToCartButton({ id, name, price }: Props) {
@@ -24,7 +15,6 @@ export default function AddToCartButton({ id, name, price }: Props) {
 
   function handleClick() {
     addItem({ id, name, price });
-    // brief "Added!" confirmation, then reset
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   }

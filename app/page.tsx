@@ -1,12 +1,3 @@
-// =============================================================================
-//  HOME / LANDING PAGE  —  lives at "/"
-// =============================================================================
-//  A real landing page: a hero with a call-to-action, plus a few "featured"
-//  products. Like the products page, this is an async Server Component that
-//  reads data through the repository — so the featured items are real rows
-//  from your database, not hard-coded.
-// =============================================================================
-
 import Link from "next/link";
 import { productRepository } from "@/lib/repositories/productRepository";
 import { formatDkk } from "@/lib/format";
@@ -16,11 +7,10 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const products = await productRepository.findAll();
-  const featured = products.slice(0, 3); // show the first three
+  const featured = products.slice(0, 3);
 
   return (
     <main className="flex-1">
-      {/* ---- Hero ---- */}
       <section className="mx-auto max-w-5xl px-6 py-24 text-center">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
           Tiny Chili Store 🌶️
@@ -36,7 +26,6 @@ export default async function Home() {
         </Link>
       </section>
 
-      {/* ---- Featured products ---- */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-5xl px-6 pb-24">
           <div className="mb-6 flex items-center justify-between">

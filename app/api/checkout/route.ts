@@ -1,11 +1,3 @@
-// =============================================================================
-//  CHECKOUT API ROUTE  —  lives at "/api/checkout"
-// =============================================================================
-//  reads the request, calls the service, and
-//  returns the result. All the real logic lives in checkoutService. This
-//  separation (route = traffic cop, service = brains) keeps things tidy.
-// =============================================================================
-
 import { NextResponse } from "next/server";
 import { createCheckoutSession } from "@/lib/services/checkoutService";
 
@@ -17,8 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
     }
 
-    // The "origin" (e.g. http://localhost:3000) is sent by the browser; we use
-    // it to build the success/cancel URLs so this works locally AND in prod.
+    // Use the request origin to build success/cancel URLs that work in any env.
     const origin = request.headers.get("origin") ?? "";
 
     const url = await createCheckoutSession(items, origin);

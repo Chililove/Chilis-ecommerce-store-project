@@ -1,11 +1,3 @@
-// =============================================================================
-//  CART PAGE  —  lives at "/cart"
-// =============================================================================
-//  A client component, because it reads and changes live cart state with
-//  useCart(). It lists every item, shows a line total and a grand total, and
-//  lets you remove items or clear the cart. Checkout comes in Phase 4.
-// =============================================================================
-
 "use client";
 
 import Link from "next/link";
@@ -15,27 +7,24 @@ import { formatDkk } from "@/lib/format";
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clear, totalPrice } = useCart();
 
-  // Send the cart to our API, which creates a Stripe Checkout Session and
-  // returns its URL. Then we send the browser to Stripe's secure payment page.
   async function handleCheckout() {
     const response = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        // We only send id + quantity. The server looks up the real prices.
+        // Send only id + quantity; the server looks up the real prices.
         items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
       }),
     });
 
     const data = await response.json();
     if (data.url) {
-      window.location.href = data.url; // redirect to Stripe
+      window.location.href = data.url;
     } else {
       alert(data.error ?? "Could not start checkout.");
     }
   }
 
-  // Empty-cart state.
   if (items.length === 0) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
@@ -61,8 +50,6 @@ export default function CartPage() {
                 {formatDkk(item.price)} each
               </p>
 
-              {/* Quantity stepper. Each button sets a new quantity via
-                  updateQuantity; going below 1 removes the item. */}
               <div className="mt-2 flex items-center gap-3">
                 <button
                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -83,7 +70,6 @@ export default function CartPage() {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* line total = unit price × quantity */}
               <span className="font-medium">
                 {formatDkk(item.price * item.quantity)}
               </span>

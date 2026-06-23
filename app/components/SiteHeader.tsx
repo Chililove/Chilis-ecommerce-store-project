@@ -1,11 +1,3 @@
-// =============================================================================
-//  SITE HEADER  — top of every page
-// =============================================================================
-//  This is a client component ("use client") because it reads live cart data
-//  with useCart() — specifically the total item count, which it shows next to
-//  the Cart link and updates instantly as you add items.
-// =============================================================================
-
 "use client";
 
 import Link from "next/link";

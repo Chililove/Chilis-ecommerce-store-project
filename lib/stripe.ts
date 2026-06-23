@@ -1,11 +1,5 @@
-// =============================================================================
-//  STRIPE CLIENT  —  one shared Stripe instance (Adapter + Singleton)
-// =============================================================================
-//  This wraps the Stripe SDK behind our own file. The rest of the app imports
-//  `stripe` from here and never imports the raw SDK directly — so if Stripe's
-//  setup ever changes, we adjust it in ONE place. That's the Adapter.
-//
-// =============================================================================
+// Shared Stripe instance. Import `stripe` from here, never the raw SDK, so
+// setup changes live in one place. Secret key comes from the environment.
 
 import Stripe from "stripe";
 

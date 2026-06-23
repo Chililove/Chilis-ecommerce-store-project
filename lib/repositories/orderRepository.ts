@@ -1,17 +1,9 @@
-// =============================================================================
-//  ORDER REPOSITORY  —  the ONLY place that reads/writes orders
-// =============================================================================
-//  Same repository pattern as products: all order database access lives here.
-// =============================================================================
+// The only place that reads/writes orders.
 
 import prisma from "@/lib/prisma";
 
 export const orderRepository = {
-  // Create a paid order together with its line items in one go. Prisma's
-  // "nested create" inserts the Order AND its OrderItems in a single call —
-  // and because they're created together, the foreign keys line up correctly
-  // Find an order by its Stripe session id. Used to check whether we've already
-  // processed a given checkout (idempotency).
+  // Idempotency check: has this checkout session already been processed?
   findByStripeSessionId(stripeSessionId: string) {
     return prisma.order.findUnique({ where: { stripeSessionId } });
   },
@@ -32,7 +24,7 @@ export const orderRepository = {
           create: data.items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            price: item.price, // snapshot of the price at purchase time
+            price: item.price, // price snapshot at purchase time
           })),
         },
       },

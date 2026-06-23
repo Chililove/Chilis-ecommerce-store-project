@@ -1,8 +1,4 @@
-// =============================================================================
-//  SEED SCRIPT  —  fills database with data
-// =============================================================================
-//  Run it with:  npm run db:seed   (or: npx tsx prisma/seed.ts)
-// =============================================================================
+// Seed script. Run with: npm run db:seed
 
 import "dotenv/config";
 import prisma from "../lib/prisma";
@@ -10,14 +6,12 @@ import prisma from "../lib/prisma";
 async function main() {
   console.log("Seeding chili plants...");
 
-  // Clear existing rows first so re-running gives a clean slate.
-  // ORDER MATTERS because of foreign keys: delete the "child" rows that point
-  // at others BEFORE the rows they depend on. Otherwise you get "Foreign key constraint failed" errors.
+  // Delete in child-to-parent order to respect foreign keys.
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.product.deleteMany();
 
-  // Prices are strings to stay exact for the Decimal column. They're in DKK.
+  // Prices are strings (DKK) to stay exact for the Decimal column.
   const products = [
     {
       name: "Bird's Eye Chili",

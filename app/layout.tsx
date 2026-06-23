@@ -30,8 +30,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* CartProvider wraps everything, so any page or component can use the
-            cart via useCart(). SiteHeader sits above all pages. */}
         <CartProvider>
           <SiteHeader />
           {children}
