@@ -1,8 +1,8 @@
 // =============================================================================
 //  CHECKOUT API ROUTE  —  lives at "/api/checkout"
 // =============================================================================
-//  Notice how THIN this is: it just reads the request, calls the service, and
-//  returns the result. All the real logic lives in checkoutService. That
+//  reads the request, calls the service, and
+//  returns the result. All the real logic lives in checkoutService. This
 //  separation (route = traffic cop, service = brains) keeps things tidy.
 // =============================================================================
 

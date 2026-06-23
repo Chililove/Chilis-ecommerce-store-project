@@ -6,7 +6,6 @@
 //  event, and this route reacts to it. It's the TRUSTED source of truth for
 //  "did the payment actually succeed?", unlike the browser redirect.
 //
-//  Two important details:
 //   - runtime = "nodejs": webhooks need the raw request body and Node's crypto,
 //     which the default edge runtime can't provide.
 //   - signature verification: we confirm the request really came from Stripe by
@@ -53,7 +52,7 @@ export async function POST(request: Request) {
     const email = session.customer_details?.email ?? "unknown@example.com";
 
     try {
-      await recordPaidOrder({ cart, email, stripeSessionId: session.id });
+      await recordPaidOrder({ cart, email });
     } catch (err) {
       console.error("Failed to record order:", err);
       // A 500 tells Stripe to retry the webhook later.
