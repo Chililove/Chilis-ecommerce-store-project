@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     const email = session.customer_details?.email ?? "unknown@example.com";
 
     try {
-      await recordPaidOrder({ cart, email });
+      await recordPaidOrder({ cart, email, stripeSessionId: session.id });
     } catch (err) {
       console.error("Failed to record order:", err);
       // A 500 tells Stripe to retry the webhook later.
